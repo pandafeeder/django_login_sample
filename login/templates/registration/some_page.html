@@ -1,0 +1,47 @@
+<h1>THIS IS SOME PAGE YOU'RE VISITING</h1>
+<a href="/login/?next={{ request.get_full_path }}">LOGIN_PAGE</a>
+</br>
+</br>
+{% lorem %}
+</br>
+</br>
+<form id="login_form" action="{{ request.get_full_path }}" method="post">
+username: <input type="test" name="username"></input>
+password: <input type="password" name="username"></input>
+</form>
+<button onclick="login()">AJAX_LOGIN</button>
+</br>
+<h2>LOGIN STATUS:</h2>
+{% if user.is_authenticated %}
+<p>WELCOME {{ request.user }}</p>
+{% else %}
+<p id="login_status">not login yet</p>
+{% endif %}
+
+
+<script>
+function login () {
+    csrf_token = "{{ csrf_token }}";
+    form_data = getFormData();
+    xhttp = new XMLHttpRequest();
+    xhttp.open('POST', '{{ request.path}}', true);
+    xhttp.setRequestHeader('X-CSRFTOKEN', csrf_token);
+    xhttp.setRequestHeader('Content-type', "application/x-www-form-urlencoded");
+    xhttp.onreadystatechange = function () {
+	if (xhttp.readyState == 4 && xhttp.status == 200) {
+	    document.getElementById('login_status').innerHTML = xhttp.responseText;
+	}
+    }
+    xhttp.send(form_data);
+}
+
+//just for demo purpose
+function getFormData () {
+    var form_obj = document.getElementById("login_form");
+    username = form_obj.elements[0].value;
+    password = form_obj.elements[1].value;
+    data = "username="+username+"&password="+password;
+    return data
+    
+}
+</script>
